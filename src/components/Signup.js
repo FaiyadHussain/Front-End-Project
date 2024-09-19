@@ -1,26 +1,44 @@
-// src/components/Signup.js
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css"; // Import Toastify CSS
 
 function Signup() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [username, setUsername] = useState("");
-  const [error, setError] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:5000/api/auth/register", {
-        email,
-        password,
-        username,
+      await axios.post(
+        "http://localhost:5000/api/auth/register",
+        {
+          email,
+          password,
+          username,
+        },
+        { withCredentials: true }
+      );
+
+      // Show success toast
+      toast.success("Registration successful!", {
+        position: "top-right",
+        autoClose: 3000, // Auto close after 3 seconds
       });
-      navigate("/login"); // Redirect to login page on success
+
+      // Redirect to login after a short delay
+      setTimeout(() => {
+        navigate("/login");
+      }, 3000); // Delay navigation by 3 seconds for toast visibility
     } catch (err) {
-      setError("Registration failed. Please try again.");
+      // Show error toast
+      toast.error("Registration failed. Please try again.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
     }
   };
 
@@ -30,7 +48,6 @@ function Signup() {
         <h2 className="text-3xl font-semibold mb-6 text-center text-blue-600">
           Create an Account
         </h2>
-        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
         <form onSubmit={handleSubmit}>
           <label className="block mb-4">
             <span className="block text-gray-700 text-sm font-medium mb-1">
@@ -85,6 +102,7 @@ function Signup() {
           </a>
         </p>
       </div>
+      <ToastContainer />
     </div>
   );
 }
